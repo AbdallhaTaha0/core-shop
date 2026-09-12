@@ -2,6 +2,7 @@
 // configuration exclusively through src/config/env.ts; this file exists so
 // `npm run db:migrate*` resolves the same database without duplicating
 // connection logic into JSON. Defaults match docker-compose.yml local dev.
+require('dotenv').config(); // loads server/.env when scripts run from server/
 function fromUrl(rawUrl) {
   const url = new URL(rawUrl);
   return {

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import 'dotenv/config'; // loads server/.env so TEST_DATABASE_URL works without shell exports
 
 export default defineConfig({
   test: {

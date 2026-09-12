@@ -33,6 +33,8 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'off',
+      // .cjs tooling files cannot use ESM import statements.
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 );
