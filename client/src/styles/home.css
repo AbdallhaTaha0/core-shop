@@ -1,0 +1,112 @@
+.hero {
+  background: #e8ece8;
+  overflow: hidden;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 0.83fr 1.17fr;
+  min-height: 560px;
+}
+.hero-copy {
+  padding: 78px 50px 48px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 700;
+}
+.signal-dot {
+  display: block;
+  width: 7px;
+  height: 7px;
+  background: var(--orange);
+}
+.hero h1 {
+  font-family: 'Barlow Condensed';
+  font-size: clamp(64px, 7.2vw, 112px);
+  line-height: 0.89;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  margin: 35px 0 28px;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--orange);
+}
+.hero-copy > p {
+  font-size: 17px;
+  line-height: 1.55;
+  color: #3f4a48;
+  max-width: 390px;
+  margin-bottom: 30px;
+}
+.hero-note {
+  display: flex;
+  gap: 35px;
+  margin-top: auto;
+  padding-top: 35px;
+  color: #75817b;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  font-weight: 700;
+}
+.hero-visual {
+  background: #1e292a;
+  color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.hero-topline {
+  display: flex;
+  justify-content: space-between;
+  padding: 22px 28px;
+  border-bottom: 1px solid #ffffff30;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: #a3b4ac;
+  font-size: 10px;
+  font-weight: 700;
+}
+.hero-visual .component-art {
+  flex: 1;
+  min-height: 350px;
+}
+.hero-product {
+  padding: 22px 28px 25px;
+  border-top: 1px solid #ffffff30;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+}
+.hero-product > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hero-product span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a3b4ac;
+}
+.hero-product a {
+  font-family: 'Barlow Condensed';
+  font-size: 25px;
+  font-weight: 600;
+}
+.hero-product strong {
+  font-family: 'Barlow Condensed';
+  font-size: 25px;
+  white-space: nowrap;
+}

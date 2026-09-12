@@ -1,0 +1,333 @@
+.category-section,
+.featured-section {
+  padding-block: 85px;
+}
+.category-list {
+  border-top: 1px solid var(--line);
+}
+.category-row {
+  display: grid;
+  grid-template-columns: 60px minmax(170px, 1.2fr) 1.5fr 24px;
+  align-items: center;
+  gap: 20px;
+  min-height: 94px;
+  border-bottom: 1px solid var(--line);
+  transition: padding 0.2s;
+}
+.category-row:hover {
+  padding-inline: 10px;
+  color: var(--ink);
+}
+.category-row:hover svg {
+  color: var(--orange);
+}
+.category-num {
+  color: var(--orange);
+  font-family: 'Barlow Condensed';
+  font-weight: 700;
+  font-size: 18px;
+}
+.category-row strong {
+  font-family: 'Barlow Condensed';
+  font-size: 30px;
+  font-weight: 600;
+}
+.category-description {
+  color: var(--muted);
+  font-size: 14px;
+}
+.featured-section {
+  padding-top: 10px;
+  padding-bottom: 105px;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.product-tile {
+  min-width: 0;
+}
+.tile-visual {
+  height: 245px;
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+.tile-visual .component-art {
+  transition: transform 0.35s;
+  height: 100%;
+}
+.tile-visual:hover .component-art {
+  transform: scale(1.04);
+}
+.tile-index {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  font-family: 'Barlow Condensed';
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.tile-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 17px 0 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.in-stock {
+  color: var(--teal) !important;
+}
+.out-stock {
+  color: #a94b2b !important;
+}
+.tile-name {
+  font-family: 'Barlow Condensed';
+  font-size: 23px;
+  line-height: 1.08;
+  font-weight: 600;
+  display: block;
+  min-height: 50px;
+}
+.tile-bottom {
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tile-bottom strong {
+  font-size: 16px;
+}
+.tile-bottom a {
+  color: var(--orange);
+}
+.closing-band {
+  background: var(--orange);
+  color: white;
+}
+.closing-inner {
+  min-height: 112px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.closing-inner span {
+  font-family: 'Barlow Condensed';
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.closing-inner a {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-weight: 700;
+  border-bottom: 1px solid white;
+  padding-bottom: 4px;
+}
+.closing-inner a:hover {
+  color: white;
+}
+.standard-page,
+.catalog-page {
+  padding-top: 47px;
+  padding-bottom: 110px;
+  min-height: 55vh;
+}
+.page-intro {
+  padding-bottom: 43px;
+}
+.page-intro h1 {
+  font-family: 'Barlow Condensed';
+  font-size: clamp(55px, 6vw, 80px);
+  line-height: 0.95;
+  margin: 12px 0 12px;
+  letter-spacing: -0.015em;
+}
+.page-intro p {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0;
+}
+.catalog-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 15px 0;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid var(--line);
+  width: min(400px, 100%);
+  height: 46px;
+  padding: 0 12px;
+}
+.search-box input {
+  border: 0;
+  outline: 0;
+  min-width: 0;
+  flex: 1;
+  background: transparent;
+}
+.search-box button {
+  border: 0;
+  background: transparent;
+  color: var(--orange);
+  font-weight: 700;
+}
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.sort-control select,
+.admin-table-wrap select {
+  border: 1px solid var(--line);
+  background: white;
+  padding: 10px 12px;
+  color: var(--ink);
+}
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 44px;
+  padding-top: 28px;
+}
+.filters {
+  padding-right: 24px;
+  border-right: 1px solid var(--line);
+}
+.filters-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 29px;
+}
+.filters-heading strong {
+  font-family: 'Barlow Condensed';
+  font-size: 21px;
+}
+.filters-heading button {
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: underline;
+}
+.filters fieldset {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 0;
+  padding: 17px 0 24px;
+}
+.filters legend {
+  font-weight: 700;
+  font-size: 13px;
+  padding-top: 19px;
+}
+.filter-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+.filter-choice input {
+  accent-color: var(--orange);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.stock-filter {
+  border-top: 1px solid var(--line);
+  padding: 22px 0;
+}
+.results-line {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+}
+.catalog-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 40px;
+}
+.catalog-grid .tile-visual {
+  height: 220px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 55px;
+  font-size: 13px;
+}
+.pagination button {
+  background: none;
+  border: 1px solid var(--line);
+  padding: 10px 15px;
+}
+.empty-state {
+  padding: 65px 10px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.empty-state h2,
+.empty-state h3 {
+  font-family: 'Barlow Condensed';
+  font-size: 35px;
+  margin-bottom: 10px;
+}
+.empty-state p {
+  color: var(--muted);
+  max-width: 380px;
+  margin: 0 auto 25px;
+  line-height: 1.5;
+}
+.empty-page {
+  padding: 100px 0;
+}
+.empty-page h1 {
+  font-family: 'Barlow Condensed';
+  font-size: 64px;
+}
+.empty-page p {
+  color: var(--muted);
+}
+.breadcrumbs {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 29px 0 36px;
+  flex-wrap: wrap;
+}
+.breadcrumbs a:hover {
+  color: var(--orange);
+}
+.detail-page {
+  padding-bottom: 110px;
+}

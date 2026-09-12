@@ -1,0 +1,93 @@
+.account-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 80px;
+}
+.account-section + .account-section {
+  margin-top: 65px;
+}
+.empty-state.compact {
+  padding: 35px;
+}
+.empty-state.compact h3 {
+  font-size: 29px;
+}
+.order-row {
+  display: grid;
+  grid-template-columns: 1fr 100px 90px 20px;
+  gap: 15px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 19px 0;
+  font-size: 14px;
+}
+.order-row > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.order-row small {
+  color: var(--muted);
+}
+.order-row > svg {
+  color: var(--orange);
+}
+.status-label {
+  text-transform: capitalize;
+  color: var(--teal);
+}
+.address-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.address-entry {
+  border: 1px solid var(--line);
+  background: white;
+  padding: 19px;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+  font-size: 14px;
+}
+.address-entry p {
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 12px 0 0;
+}
+.address-entry button {
+  font-size: 12px;
+  text-decoration: underline;
+}
+.default-tag {
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--teal);
+}
+.muted {
+  color: var(--muted);
+}
+.account-aside {
+  border-top: 3px solid var(--ink);
+  padding-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 15px;
+  font-size: 14px;
+}
+.account-aside > span {
+  color: var(--muted);
+}
+.account-aside button {
+  margin-top: 15px;
+  text-decoration: underline;
+}
+.aside-label {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+}

@@ -18,13 +18,13 @@ services:
     ports:
       # Host port is configurable because a machine-local PostgreSQL often
       # already occupies 5432 (e.g. `DB_HOST_PORT=5433 docker compose up db`).
-      - "127.0.0.1:${DB_HOST_PORT:-5432}:5432"
+      - '127.0.0.1:${DB_HOST_PORT:-5432}:5432'
     volumes:
       # PostgreSQL 18+ images manage a versioned data subdirectory themselves
       # (pg_ctlcluster-compatible layout), so the volume mounts at the parent.
       - pgdata:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s
       timeout: 3s
       retries: 10
@@ -47,7 +47,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
     ports:
-      - "127.0.0.1:3000:3000"
+      - '127.0.0.1:3000:3000'
 
 volumes:
   pgdata:

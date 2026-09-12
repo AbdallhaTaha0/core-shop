@@ -1,0 +1,29 @@
+{
+  "name": "core-shop-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host localhost",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host localhost",
+    "format": "prettier --check . --ignore-path .gitignore",
+    "format:write": "prettier --write . --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "prettier": "3.9.6",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.9.0",
+    "vite": "^5.4.0"
+  }
+}

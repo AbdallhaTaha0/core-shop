@@ -150,11 +150,13 @@ PostgreSQL
 Responsibilities:
 
 ### Routes
+
 - Define endpoints.
 - Attach appropriate middleware.
 - Do not contain business logic.
 
 ### Middleware
+
 Handle cross-cutting concerns such as:
 
 - authentication
@@ -166,6 +168,7 @@ Handle cross-cutting concerns such as:
 - error handling
 
 ### Controllers
+
 Controllers should be thin.
 
 They should:
@@ -177,6 +180,7 @@ They should:
 Do not put substantial business logic in controllers.
 
 ### Services
+
 Services contain business rules and workflows.
 
 Examples:
@@ -191,6 +195,7 @@ Examples:
 - authorization-sensitive operations
 
 ### Models
+
 Sequelize models represent persistence/domain data.
 
 The assistant/OpenCode is responsible for carefully designing the Sequelize models, relationships, constraints, indexes, defaults, nullable fields, deletion behavior, and relevant database behavior.
@@ -259,7 +264,7 @@ Use Sequelize 6 stable.
 ### Do NOT use
 
 ```ts
-sequelize.sync({ alter: true })
+sequelize.sync({ alter: true });
 ```
 
 as the production schema-management strategy.
@@ -1107,16 +1112,9 @@ The first task is only the backend foundation.
 12. Implement centralized error handling.
 13. Implement baseline security middleware.
 14. Implement explicit CORS configuration.
-15. Implement:
-   ```text
-   GET /api/v1/health
-   ```
+15. Implement `GET /api/v1/health`.
 16. Add automated tests for the foundation.
-17. Verify:
-   - TypeScript
-   - tests
-   - database connectivity
-   - application startup
+17. Verify TypeScript, tests, database connectivity, and application startup.
 18. Report the resulting state.
 
 ### Do not proceed to
@@ -1227,7 +1225,6 @@ Do not jump ahead of the current phase.
 
 Start with the backend foundation described in Section 30, verify it thoroughly, and only then wait for the next development instruction.
 
-
 # 32. Companion Agent Files
 
 This specification works together with:
@@ -1236,4 +1233,3 @@ This specification works together with:
 - `RULES.md` — non-negotiable engineering and security rules.
 
 The backend specification defines **what Core Shop needs**. The companion files define **how the AI agent should work while implementing it**.
-

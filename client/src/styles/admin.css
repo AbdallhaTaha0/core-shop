@@ -1,0 +1,172 @@
+.admin-tabs {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 37px;
+}
+.admin-tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font-family: 'Barlow Condensed';
+  font-size: 22px;
+  font-weight: 600;
+  padding: 0 0 13px;
+}
+.admin-tabs button.active {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+.admin-table-wrap {
+  overflow: auto;
+}
+.admin-table-wrap table {
+  border-collapse: collapse;
+  width: 100%;
+  background: white;
+  font-size: 14px;
+}
+.admin-table-wrap th {
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 15px;
+  border-bottom: 1px solid var(--ink);
+}
+.admin-table-wrap td {
+  padding: 17px 15px;
+  border-bottom: 1px solid var(--line);
+  min-width: 100px;
+}
+.admin-table-wrap td:first-child {
+  font-weight: 700;
+  min-width: 260px;
+}
+.admin-table-wrap td small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.admin-table-wrap .text-button {
+  color: var(--orange);
+  font-weight: 700;
+}
+.admin-tabs {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.admin-tabs button {
+  flex: none;
+}
+.admin-editor {
+  background: white;
+  border-top: 3px solid var(--orange);
+  padding: 28px;
+  margin: 25px 0 35px;
+  display: grid;
+  gap: 18px;
+}
+.admin-editor h3 {
+  font-family: 'Barlow Condensed';
+  font-size: 30px;
+  margin: 0;
+}
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.admin-editor label,
+.taxonomy-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.admin-editor input,
+.admin-editor select,
+.admin-editor textarea,
+.taxonomy-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #fbfcfa;
+  padding: 10px 12px;
+  color: var(--ink);
+}
+.admin-editor input,
+.admin-editor select,
+.taxonomy-form input {
+  min-height: 45px;
+}
+.admin-editor .check-label {
+  flex-direction: row;
+  align-items: center;
+}
+.admin-editor .check-label input {
+  width: 17px;
+  height: 17px;
+  min-height: 0;
+  accent-color: var(--orange);
+}
+.table-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.table-actions .danger {
+  color: #a43221;
+}
+.admin-hint {
+  font-size: 13px;
+  margin-top: 18px;
+}
+.taxonomy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px;
+}
+.taxonomy-row {
+  border-bottom: 1px solid var(--line);
+  padding: 17px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.taxonomy-row span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.taxonomy-row small {
+  color: var(--muted);
+}
+.taxonomy-row .text-button {
+  color: var(--orange);
+  font-size: 12px;
+}
+.taxonomy-form {
+  background: white;
+  padding: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+.taxonomy-form label {
+  flex: 1;
+  min-width: 150px;
+}
+@media (max-width: 760px) {
+  .admin-form-grid,
+  .taxonomy-grid {
+    grid-template-columns: 1fr;
+  }
+  .taxonomy-grid {
+    gap: 50px;
+  }
+}

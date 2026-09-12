@@ -5,20 +5,21 @@ guest + user carts with login merging, transactional checkout, orders, address b
 management, audit trail, and OpenAPI docs. Built as a modular monolith with production-quality
 practices (validation, transactions, inventory safety, tested behavior — not just compilation).
 
-> **Scope note:** the backend (`server/`) is the implementation target. `client/` exists as an
-> intentionally incomplete placeholder for a future frontend — do not build the frontend here.
+> **Scope note:** `server/` is the API and `client/` is the React storefront. The historical
+> backend specification in `CORE_SHOP_BACKEND_OPENCODE.md` describes the earlier backend phase.
 > `AGENTS.md` / `RULES.md` are local-only agent instructions and are git-ignored.
 
 ## Stack
 
-| Layer      | Choice                                                        |
-| ---------- | ------------------------------------------------------------- |
-| Runtime    | Node.js 24 LTS, TypeScript strict, Express 5                  |
-| Database   | PostgreSQL 18 (Docker), Sequelize 6, migrations only          |
-| Validation | Zod (strict schemas — unknown fields are rejected)            |
+| Layer      | Choice                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------ |
+| Runtime    | Node.js 24 LTS, TypeScript strict, Express 5                                                           |
+| Database   | PostgreSQL 18 (Docker), Sequelize 6, migrations only                                                   |
+| Validation | Zod (strict schemas — unknown fields are rejected)                                                     |
 | Auth       | JWT in HttpOnly + SameSite=Lax cookies (+Secure in prod), bcrypt-12, Origin checks on cookie mutations |
-| Testing    | Vitest + Supertest against an isolated `*_test` database      |
-| Docs       | OpenAPI 3.0 JSON at `/api-docs.json`, Swagger UI at `/api-docs` |
+| Testing    | Vitest + Supertest against an isolated `*_test` database                                               |
+| Docs       | OpenAPI 3.0 JSON at `/api-docs.json`, Swagger UI at `/api-docs`                                        |
+| Frontend   | React 19, TypeScript, Vite, Tailwind CSS                                                               |
 
 Money is integer minor units (`priceCents`) end to end — never floats.
 
@@ -58,6 +59,19 @@ Verify:
   `{"status":"ok","service":"core-shop-api","database":"connected"}`
 - Interactive docs: `http://localhost:3000/api-docs`
 
+Run the storefront in another terminal:
+
+```bash
+cd client
+npm ci
+npm run dev
+```
+
+Open `http://localhost:5173`. Use **localhost** rather than `127.0.0.1` so the browser Origin
+matches the backend's default `FRONTEND_ORIGIN`. The Vite dev server proxies `/api` to the
+backend on port 3000. The storefront reads live API data, and the demo catalog appears after
+`npm run db:seed`.
+
 > **Port already in use?** If a machine-local PostgreSQL occupies host port 5432, run the
 > database on another host port instead — no file changes needed:
 >
@@ -71,36 +85,36 @@ Verify:
 
 All config lives in `server/.env` (never committed). Copy `server/.env.example` and adjust:
 
-| Variable          | Example                                                        | Notes                                                        |
-| ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------ |
-| `NODE_ENV`        | `development`                                                  | `development` / `test` / `production`                        |
-| `PORT`            | `3000`                                                         | API port                                                     |
-| `DATABASE_URL`    | `postgres://coreshop:coreshop-dev-only@localhost:5432/coreshop` | Host-side dev URL (compose `api` service uses `db` host)     |
-| `FRONTEND_ORIGIN` | `http://localhost:5173`                                        | Exact frontend origin for CORS (never a wildcard with credentials) |
-| `JWT_SECRET`      | `dev-only-secret`                                              | Required in every environment; use a long random value in prod |
-| `JWT_EXPIRES_IN`  | `15m`                                                          | `30s` / `15m` / `2h` / `7d` format                           |
-| `TEST_DATABASE_URL` | `postgres://...@localhost:5432/coreshop_test`                | Isolated test DB (defaults to `coreshop_test` on 5432; override when using `DB_HOST_PORT`) |
-| `DB_HOST_PORT`    | `5432`                                                         | Compose-only: host port mapped to the container (root env / shell) |
+| Variable            | Example                                                         | Notes                                                                                      |
+| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `NODE_ENV`          | `development`                                                   | `development` / `test` / `production`                                                      |
+| `PORT`              | `3000`                                                          | API port                                                                                   |
+| `DATABASE_URL`      | `postgres://coreshop:coreshop-dev-only@localhost:5432/coreshop` | Host-side dev URL (compose `api` service uses `db` host)                                   |
+| `FRONTEND_ORIGIN`   | `http://localhost:5173`                                         | Exact frontend origin for CORS (never a wildcard with credentials)                         |
+| `JWT_SECRET`        | `dev-only-secret`                                               | Required in every environment; use a long random value in prod                             |
+| `JWT_EXPIRES_IN`    | `15m`                                                           | `30s` / `15m` / `2h` / `7d` format                                                         |
+| `TEST_DATABASE_URL` | `postgres://...@localhost:5432/coreshop_test`                   | Isolated test DB (defaults to `coreshop_test` on 5432; override when using `DB_HOST_PORT`) |
+| `DB_HOST_PORT`      | `5432`                                                          | Compose-only: host port mapped to the container (root env / shell)                         |
 
 The app fails fast on invalid configuration at startup. `JWT_SECRET` is required everywhere
 because the auth domain issues tokens.
 
 ## Scripts (run inside `server/`)
 
-| Command                  | Purpose                                              |
-| ------------------------ | ---------------------------------------------------- |
-| `npm run dev`            | Dev server with reload (`tsx watch`)                 |
-| `npm run build` / `start`| Compile (`tsconfig.build.json`) / run `dist/`       |
-| `npm run typecheck`      | `tsc --noEmit` (src + tests)                         |
-| `npm run lint`           | ESLint (strict TS, `any` banned)                     |
-| `npm run format`         | Prettier check (`format:write` to fix)               |
-| `npm test`               | Full suite (creates + migrates the test DB itself)   |
-| `npm run test:watch`     | Suite in watch mode                                  |
-| `npm run db:migrate`     | Apply pending migrations (dev DB from `DATABASE_URL`) |
-| `npm run db:migrate:undo`| Revert last migration                                |
-| `npm run db:migrate:status` | Show applied/pending migrations                   |
-| `npm run db:migrate:test`| Migrate the test DB explicitly                       |
-| `npm run db:seed`        | Demo catalog (skips silently if data exists)         |
+| Command                     | Purpose                                               |
+| --------------------------- | ----------------------------------------------------- |
+| `npm run dev`               | Dev server with reload (`tsx watch`)                  |
+| `npm run build` / `start`   | Compile (`tsconfig.build.json`) / run `dist/`         |
+| `npm run typecheck`         | `tsc --noEmit` (src + tests)                          |
+| `npm run lint`              | ESLint (strict TS, `any` banned)                      |
+| `npm run format`            | Prettier check (`format:write` to fix)                |
+| `npm test`                  | Full suite (creates + migrates the test DB itself)    |
+| `npm run test:watch`        | Suite in watch mode                                   |
+| `npm run db:migrate`        | Apply pending migrations (dev DB from `DATABASE_URL`) |
+| `npm run db:migrate:undo`   | Revert last migration                                 |
+| `npm run db:migrate:status` | Show applied/pending migrations                       |
+| `npm run db:migrate:test`   | Migrate the test DB explicitly                        |
+| `npm run db:seed`           | Demo catalog (skips silently if data exists)          |
 
 Verification checklist for every change: `typecheck` → `lint` → `format` → `test`,
 plus migration + live-API checks when the change touches the DB or routes.
@@ -143,22 +157,22 @@ core-shop/
 │   ├── migrations/         # schema changes only (never edit applied ones)
 │   ├── seeders/            # deterministic demo data
 │   └── .env.example        # safe placeholders
-└── client/                 # FUTURE frontend placeholder — do not implement here
+└── client/                 # React + Tailwind storefront
 ```
 
 Request flow: `Route → Middleware → Zod validation → Controller → Service → Sequelize → PostgreSQL`.
 
 ## API overview (`/api/v1`)
 
-| Area      | Endpoints |
-| --------- | --------- |
-| Health    | `GET /health` (200 ok / 503 degraded with DB check) |
-| Auth      | `POST /auth/register` (201, auto-login) · `POST /auth/login` · `POST /auth/logout` · `GET /auth/me` |
-| Addresses | `GET /addresses` · `POST /addresses` · `PATCH /addresses/:id` · `DELETE /addresses/:id` (strictly own) |
-| Cart      | `GET /cart` · `POST /cart/items` · `PATCH /cart/items/:id` · `DELETE /cart/items/:id` (guest cookie or session; login auto-merges) |
-| Checkout  | `POST /checkout` (body: only optional `addressId`; totals always server-computed) |
-| Orders    | `GET /orders` · `GET /orders/:id` (own only; others → 404) |
-| Catalog   | `GET /products` (search/filter/sort/paginate) · `GET /products/:slug` · `GET /categories` · `GET /brands` |
+| Area      | Endpoints                                                                                                                                                                |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Health    | `GET /health` (200 ok / 503 degraded with DB check)                                                                                                                      |
+| Auth      | `POST /auth/register` (201, auto-login) · `POST /auth/login` · `POST /auth/logout` · `GET /auth/me`                                                                      |
+| Addresses | `GET /addresses` · `POST /addresses` · `PATCH /addresses/:id` · `DELETE /addresses/:id` (strictly own)                                                                   |
+| Cart      | `GET /cart` · `POST /cart/items` · `PATCH /cart/items/:id` · `DELETE /cart/items/:id` (guest cookie or session; login auto-merges)                                       |
+| Checkout  | `POST /checkout` (body: only optional `addressId`; totals always server-computed)                                                                                        |
+| Orders    | `GET /orders` · `GET /orders/:id` (own only; others → 404)                                                                                                               |
+| Catalog   | `GET /products` (search/filter/sort/paginate) · `GET /products/:slug` · `GET /categories` · `GET /brands`                                                                |
 | Admin     | `/admin/products`, `/admin/categories`, `/admin/brands` (CRUD) · `/admin/orders` + status machine · `/admin/users` + role changes (never your own) · `/admin/audit-logs` |
 
 Errors share one shape: `{ "error": { "code": "SOME_CODE", "message": "...", "details": {} } }`.
@@ -169,7 +183,7 @@ Production responses never leak stack traces or internals. Full reference with s
 
 The session lives in an **HttpOnly cookie**, and browsers forbid JavaScript (including
 Swagger UI) from setting the `Cookie` header manually — so pasting a token into Swagger's
-Authorize dialog does nothing. Instead, log in *through the browser* once; the server sets
+Authorize dialog does nothing. Instead, log in _through the browser_ once; the server sets
 the cookie and Swagger's same-origin Try-it-out requests carry it automatically.
 
 1. **Point `FRONTEND_ORIGIN` at Swagger temporarily.** The CSRF check requires the `Origin`
@@ -183,9 +197,9 @@ the cookie and Swagger's same-origin Try-it-out requests carry it automatically.
    ```js
    await fetch('/api/v1/auth/login', {
      method: 'POST',
-     headers: {'Content-Type': 'application/json'},
-     body: JSON.stringify({email: 'you@example.com', password: 'test-pass-1'})
-   }).then(r => r.json());
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ email: 'you@example.com', password: 'test-pass-1' }),
+   }).then((r) => r.json());
    ```
    (Register first via `POST /api/v1/auth/register` the same way if needed.)
 3. **Use Try-it-out.** Expand any locked endpoint (e.g. `GET /api/v1/auth/me`) and Execute —
@@ -213,16 +227,16 @@ the cookie and Swagger's same-origin Try-it-out requests carry it automatically.
 7. **Audit security-relevant changes** via `recordAudit` (fail-open, never blocks flows).
 8. **Docs are code** — new/changed endpoints must update `src/docs/openapi.ts`
    (`tests/docs.test.ts` guards every path).
-9. Keep changes small, keep `client/` untouched, and run the verification checklist.
+9. Keep changes small, preserve API contracts when changing `client/`, and run the relevant checks.
 
 ## Troubleshooting
 
-| Symptom | Likely cause / fix |
-| ------- | ------------------ |
-| `docker compose up db` fails to bind 5432 | Local Postgres holds the port → use `DB_HOST_PORT=5433` and point `DATABASE_URL`/`TEST_DATABASE_URL` at 5433 |
-| `db` container `unhealthy` on first pull | Wait for the healthcheck (`pg_isready`); check `docker logs core-shop-db` |
-| Tests hit the dev DB / refuse to run | `truncateAll` only allows `*_test` databases — set `TEST_DATABASE_URL` correctly |
-| `bcrypt` install issues | Native module with prebuilds; ensure Node 24 and retry `npm ci` |
-| `CREATE EXTENSION pg_trgm` fails | Needs a superuser (true for the compose default user); managed DBs may need a grant |
-| Suite is slow (~1 min) | Expected: bcrypt cost 12 per hash; files run sequentially by design |
-| Login works but admin routes 403 after promotion | By design: re-login so the new role lands in a fresh token |
+| Symptom                                          | Likely cause / fix                                                                                           |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `docker compose up db` fails to bind 5432        | Local Postgres holds the port → use `DB_HOST_PORT=5433` and point `DATABASE_URL`/`TEST_DATABASE_URL` at 5433 |
+| `db` container `unhealthy` on first pull         | Wait for the healthcheck (`pg_isready`); check `docker logs core-shop-db`                                    |
+| Tests hit the dev DB / refuse to run             | `truncateAll` only allows `*_test` databases — set `TEST_DATABASE_URL` correctly                             |
+| `bcrypt` install issues                          | Native module with prebuilds; ensure Node 24 and retry `npm ci`                                              |
+| `CREATE EXTENSION pg_trgm` fails                 | Needs a superuser (true for the compose default user); managed DBs may need a grant                          |
+| Suite is slow (~1 min)                           | Expected: bcrypt cost 12 per hash; files run sequentially by design                                          |
+| Login works but admin routes 403 after promotion | By design: re-login so the new role lands in a fresh token                                                   |
