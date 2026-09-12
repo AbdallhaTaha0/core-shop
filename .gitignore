@@ -1,0 +1,31 @@
+# Dependencies (install with `npm ci` inside server/)
+node_modules/
+server/node_modules/
+
+# Build output and test artifacts
+dist/
+server/dist/
+coverage/
+server/coverage/
+
+# Environment files (never commit secrets; see server/.env.example)
+.env
+*.env.local
+server/.env
+
+# Local-only AI instruction files (not part of the project)
+AGENTS.md
+RULES.md
+
+# Local docker-compose overrides (e.g. custom ports)
+docker-compose.override.yml
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

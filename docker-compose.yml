@@ -1,0 +1,53 @@
+name: core-shop
+
+# Backend infrastructure: PostgreSQL is the only stateful dependency.
+# - Image is pinned to an explicit patch (18.6); never `postgres:latest`.
+# - Credentials come from the environment with local-dev-only defaults.
+#   Override POSTGRES_PASSWORD (and friends) in production.
+# - The database port is bound to 127.0.0.1 only — no LAN exposure.
+services:
+  db:
+    image: postgres:18.6-bookworm
+    container_name: core-shop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-coreshop}
+      # Local-dev default only. Set a real secret in production.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coreshop-dev-only}
+      POSTGRES_DB: ${POSTGRES_DB:-coreshop}
+    ports:
+      # Host port is configurable because a machine-local PostgreSQL often
+      # already occupies 5432 (e.g. `DB_HOST_PORT=5433 docker compose up db`).
+      - "127.0.0.1:${DB_HOST_PORT:-5432}:5432"
+    volumes:
+      # PostgreSQL 18+ images manage a versioned data subdirectory themselves
+      # (pg_ctlcluster-compatible layout), so the volume mounts at the parent.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: core-shop-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-coreshop}:${POSTGRES_PASSWORD:-coreshop-dev-only}@db:5432/${POSTGRES_DB:-coreshop}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:5173}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  pgdata:
