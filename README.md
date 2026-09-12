@@ -165,6 +165,37 @@ Errors share one shape: `{ "error": { "code": "SOME_CODE", "message": "...", "de
 Production responses never leak stack traces or internals. Full reference with schemas:
 `/api-docs`.
 
+## Testing authorized routes in Swagger UI
+
+The session lives in an **HttpOnly cookie**, and browsers forbid JavaScript (including
+Swagger UI) from setting the `Cookie` header manually — so pasting a token into Swagger's
+Authorize dialog does nothing. Instead, log in *through the browser* once; the server sets
+the cookie and Swagger's same-origin Try-it-out requests carry it automatically.
+
+1. **Point `FRONTEND_ORIGIN` at Swagger temporarily.** The CSRF check requires the `Origin`
+   header to match `FRONTEND_ORIGIN` exactly, but Swagger runs on `:3000`, not the frontend
+   origin — otherwise login from the UI fails with `403 CSRF_BLOCKED`. In `server/.env`:
+   ```text
+   FRONTEND_ORIGIN=http://localhost:3000
+   ```
+   then restart the API (`npm run dev`). Revert this when you're done testing.
+2. **Log in from the browser console.** Open `http://localhost:3000/api-docs`, press F12:
+   ```js
+   await fetch('/api/v1/auth/login', {
+     method: 'POST',
+     headers: {'Content-Type': 'application/json'},
+     body: JSON.stringify({email: 'you@example.com', password: 'test-pass-1'})
+   }).then(r => r.json());
+   ```
+   (Register first via `POST /api/v1/auth/register` the same way if needed.)
+3. **Use Try-it-out.** Expand any locked endpoint (e.g. `GET /api/v1/auth/me`) and Execute —
+   the browser attaches the cookie automatically.
+4. **For admin routes**, the user needs `role: 'admin'` (then log in again — roles are baked
+   into the token at login):
+   ```powershell
+   docker exec core-shop-db psql -U coreshop -d coreshop -c "UPDATE users SET role='admin' WHERE email='you@example.com';"
+   ```
+
 ## Conventions for continuing the work
 
 1. **Migrations only** — never `sequelize.sync({ alter: true })`; never edit an applied
