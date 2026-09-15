@@ -22,7 +22,21 @@ export function createApp(): express.Express {
   const app = express();
 
   app.disable('x-powered-by');
-  app.use(helmet());
+  // Helmet defaults, except images: admins paste external photo URLs and the
+  // storefront renders them in <img> tags, so `https:` sources must be
+  // allowed. Everything else (notably `script-src 'self'`, no inline
+  // scripts) stays at the strict default — the built frontend ships no
+  // inline scripts.
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          'img-src': ["'self'", 'data:', 'https:'],
+        },
+      },
+    }),
+  );
   app.use(
     cors({
       origin: env.FRONTEND_ORIGIN,
