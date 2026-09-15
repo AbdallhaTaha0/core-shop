@@ -7,7 +7,12 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
-  FRONTEND_ORIGIN: z.url('FRONTEND_ORIGIN must be a valid URL'),
+  // Origins never contain a path, but dashboard URLs are routinely pasted
+  // with a trailing slash — which would fail the exact-match CSRF check on
+  // every cookie-authenticated POST. Normalize once at startup.
+  FRONTEND_ORIGIN: z
+    .url('FRONTEND_ORIGIN must be a valid URL')
+    .transform((s) => s.replace(/\/+$/, '')),
   // Required in every environment now that the auth domain issues JWTs.
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   JWT_EXPIRES_IN: z.string().min(1).default('15m'),

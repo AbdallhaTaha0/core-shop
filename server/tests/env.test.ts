@@ -28,6 +28,12 @@ describe('loadEnv', () => {
     );
   });
 
+  it('strips trailing slashes from FRONTEND_ORIGIN so pasted dashboard URLs match Origin headers', () => {
+    const env = loadEnv({ ...BASE, FRONTEND_ORIGIN: 'https://coreshop-v3ltbhkf.b4a.run/' });
+
+    expect(env.FRONTEND_ORIGIN).toBe('https://coreshop-v3ltbhkf.b4a.run');
+  });
+
   it('requires JWT_SECRET in every environment', () => {
     const withoutSecret: NodeJS.ProcessEnv = { ...BASE };
     delete withoutSecret.JWT_SECRET;
