@@ -1,7 +1,6 @@
-# Core Shop — single-container production image.
+# Core Shop — single-container production image (2 stages, Small-tier friendly).
 #
-# For Back4app "Deploy a web app" with Root directory `./`: the platform
-# detects this Dockerfile and builds both halves of the repo into one image.
+# For SnapDeploy / Back4app "Deploy a web app" with Root directory `./`.
 # The Express API serves the built Vite frontend same-origin:
 #   API        -> /api/v1/*, /api-docs
 #   Frontend   -> everything else (SPA fallback to index.html)
@@ -13,43 +12,36 @@
 #   FRONTEND_ORIGIN=<this app's own public URL>
 #   JWT_SECRET=<long random string>
 #   JWT_EXPIRES_IN=15m
-# PORT is injected by the platform. `npm start` runs DB migrations first,
-# so a fresh Neon database gets its schema on first boot.
+# PORT is injected by the platform (defaults to 3000). `npm start` runs DB
+# migrations first, so a fresh Neon database gets its schema on first boot.
 
-# ---- client build (Vite -> dist/) ----
-FROM node:24.18.0-bookworm-slim AS client-build
-WORKDIR /client
-COPY client/package.json client/package-lock.json ./
-RUN npm ci --no-audit --no-fund
-COPY client/ ./
-RUN npm run build
+# ---- Stage 1: build both halves (discarded after build) ----
+FROM node:24.18.0-bookworm-slim AS build
+WORKDIR /build
+# Install dependencies first for better layer caching.
+COPY client/package.json client/package-lock.json ./client/
+RUN npm ci --prefix client --no-audit --no-fund
+COPY server/package.json server/package-lock.json ./server/
+RUN npm ci --prefix server --no-audit --no-fund
+# Build the frontend (Vite -> client/dist/).
+COPY client/ ./client/
+RUN npm run build --prefix client
+# Build the API (TypeScript -> server/dist/).
+COPY server/ ./server/
+RUN npm run build --prefix server
 
-# ---- shared base ----
-FROM node:24.18.0-bookworm-slim AS base
+# ---- Stage 2: slim production runtime ----
+FROM node:24.18.0-bookworm-slim AS production
 WORKDIR /app
-
-# ---- server dependencies (cached unless server/package.json changes) ----
-FROM base AS server-deps
-COPY server/package.json server/package-lock.json ./
-RUN npm ci --no-audit --no-fund
-
-# ---- server build (TypeScript -> dist/) ----
-FROM base AS server-build
-COPY --from=server-deps /app/node_modules ./node_modules
-COPY server/ ./
-RUN npm run build
-
-# ---- production runtime ----
-FROM base AS production
 ENV NODE_ENV=production
 ENV CLIENT_DIST_DIR=/app/client
 COPY server/package.json server/package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund
-COPY --from=server-build /app/dist ./dist
-COPY --from=server-build /app/migrations ./migrations
-COPY --from=server-build /app/.sequelizerc ./.sequelizerc
-COPY --from=server-build /app/src/config/sequelize-cli.cjs ./src/config/sequelize-cli.cjs
-COPY --from=client-build /client/dist ./client
+COPY --from=build /build/server/dist ./dist
+COPY --from=build /build/server/migrations ./migrations
+COPY --from=build /build/server/.sequelizerc ./.sequelizerc
+COPY --from=build /build/server/src/config/sequelize-cli.cjs ./src/config/sequelize-cli.cjs
+COPY --from=build /build/client/dist ./client
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
