@@ -3,6 +3,8 @@ import cors from 'cors';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import swaggerUi from 'swagger-ui-express';
 import { getEnv } from './config/env';
 import { openapiDocument } from './docs/openapi';
@@ -48,6 +50,42 @@ export function createApp(): express.Express {
     res.json(openapiDocument);
   });
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
+
+  // Single-container deployments: serve the built frontend (Vite `dist/`)
+  // alongside the API so one host serves both same-origin. Only active when
+  // CLIENT_DIST_DIR is set; otherwise the API stays API-only. Placement is
+  // deliberate: API routes and /api-docs run first, so unknown /api/* paths
+  // still fall through to the JSON 404 handler untouched.
+  if (env.CLIENT_DIST_DIR !== undefined) {
+    const clientDir = path.resolve(env.CLIENT_DIST_DIR);
+    const indexHtml = path.join(clientDir, 'index.html');
+    if (!existsSync(indexHtml)) {
+      throw new Error(
+        `Invalid environment configuration (CLIENT_DIST_DIR has no index.html: ${clientDir})`,
+      );
+    }
+    app.use(express.static(clientDir));
+    app.use((req, res, next) => {
+      if (req.method !== 'GET' && req.method !== 'HEAD') {
+        next();
+        return;
+      }
+      if (
+        req.path === '/api' ||
+        req.path.startsWith('/api/') ||
+        req.path === '/api-docs' ||
+        req.path.startsWith('/api-docs/')
+      ) {
+        next();
+        return;
+      }
+      res.sendFile(indexHtml, (err) => {
+        if (err) {
+          next(err);
+        }
+      });
+    });
+  }
 
   app.use(notFoundHandler);
   app.use(errorHandler);

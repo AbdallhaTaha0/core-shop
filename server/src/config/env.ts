@@ -11,6 +11,10 @@ const EnvSchema = z.object({
   // Required in every environment now that the auth domain issues JWTs.
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   JWT_EXPIRES_IN: z.string().min(1).default('15m'),
+  // Optional single-container deployments (e.g. Back4app from the repo root):
+  // when set, the API also serves the built frontend from this directory with
+  // an SPA fallback. Unset by default so local dev and tests are unaffected.
+  CLIENT_DIST_DIR: z.string().min(1).optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

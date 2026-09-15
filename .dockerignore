@@ -1,0 +1,9 @@
+# Root build context (Back4app builds from `./`).
+# Keep the context small and never bake secrets or local artifacts in.
+**/node_modules/
+**/dist/
+**/coverage/
+coverage/
+.git/
+**/.env
+npm-debug.log

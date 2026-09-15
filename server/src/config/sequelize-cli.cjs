@@ -8,11 +8,30 @@ function fromUrl(rawUrl) {
   return {
     username: decodeURIComponent(url.username),
     password: decodeURIComponent(url.password),
-    database: url.pathname.replace(/^\//, ''),
+    database: url.pathname.replace(/^\//, '').split('?')[0],
     host: url.hostname,
     port: url.port ? Number(url.port) : 5432,
     dialect: 'postgres',
+    dialectOptions: sslForUrl(rawUrl),
   };
+}
+
+function sslForUrl(rawUrl) {
+  try {
+    const host = new URL(rawUrl).hostname.toLowerCase();
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === 'db';
+    if (isLocal) {
+      return {};
+    }
+    // Neon and any managed Postgres with `?sslmode=require` need TLS.
+    // rejectUnauthorized:false matches Neon's pooler chain via pg.
+    if (rawUrl.toLowerCase().includes('sslmode=require') || host.includes('neon.tech')) {
+      return { ssl: { require: true, rejectUnauthorized: false } };
+    }
+    return {};
+  } catch {
+    return {};
+  }
 }
 
 function forEnv() {
@@ -38,5 +57,5 @@ module.exports = {
   test: process.env.TEST_DATABASE_URL
     ? fromUrl(process.env.TEST_DATABASE_URL)
     : { ...base, database: `${base.database}_test` },
-  production: { ...base, dialectOptions: { ssl: false } },
+  production: { ...base },
 };
