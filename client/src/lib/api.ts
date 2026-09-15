@@ -23,7 +23,11 @@ export type CartItem = {
   available: boolean;
   maxQuantity: number;
   lineTotalCents: number;
-  product: Pick<Product, 'id' | 'slug' | 'name' | 'priceCents' | 'stock'>;
+  product: Pick<Product, 'id' | 'slug' | 'name' | 'priceCents' | 'stock'> & {
+    imageUrl: string | null;
+    imageAltText: string | null;
+    categorySlug: string;
+  };
 };
 export type Cart = {
   id: string | null;

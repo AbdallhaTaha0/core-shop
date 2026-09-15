@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { api, money, type Category, type Page, type Product } from '../lib/api';
 import { useRequest } from '../hooks/useRequest';
-import { ComponentArt } from '../components/ComponentArt';
+import { ProductVisual } from '../components/ProductVisual';
 import { ProductTile } from '../components/ProductTile';
 import { RequestState } from '../components/Feedback';
 import { Icon } from '../components/Icon';
@@ -40,7 +40,13 @@ export function Home() {
               <span>Workbench / Featured component</span>
               <span>CS—001</span>
             </div>
-            <ComponentArt kind={featured?.category.slug} large />
+            <ProductVisual
+              imageUrl={featured?.images[0]?.url}
+              altText={featured?.images[0]?.altText}
+              name={featured?.name ?? 'Featured component'}
+              categorySlug={featured?.category.slug}
+              large
+            />
             <div className="hero-product">
               {featured ? (
                 <>

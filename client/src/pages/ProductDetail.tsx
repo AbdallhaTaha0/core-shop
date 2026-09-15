@@ -4,7 +4,7 @@ import { api, body, money, type Product } from '../lib/api';
 import { errorText } from '../lib/errors';
 import { useShop } from '../app/shop-context';
 import { useRequest } from '../hooks/useRequest';
-import { ComponentArt } from '../components/ComponentArt';
+import { ProductVisual } from '../components/ProductVisual';
 import { RequestState } from '../components/Feedback';
 import { Icon } from '../components/Icon';
 
@@ -55,7 +55,13 @@ export function ProductDetail() {
             </span>
             <span>CS / PRODUCT</span>
           </div>
-          <ComponentArt kind={item.category.slug} large />
+          <ProductVisual
+            imageUrl={item.images[0]?.url}
+            altText={item.images[0]?.altText}
+            name={item.name}
+            categorySlug={item.category.slug}
+            large
+          />
           <div className="detail-visual-foot">
             ENGINEERED FOR THE NEXT BUILD <span>↗</span>
           </div>

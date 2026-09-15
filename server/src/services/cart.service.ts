@@ -1,6 +1,6 @@
 import { UniqueConstraintError, type Transaction } from 'sequelize';
 import { getSequelize } from '../db/sequelize';
-import { Cart, CartItem, Product } from '../models/index';
+import { Cart, CartItem, Category, Product, ProductImage } from '../models/index';
 import type { AddCartItemDto, UpdateCartItemDto } from '../schemas/cart.schema';
 import { AppError } from '../utils/AppError';
 
@@ -10,7 +10,19 @@ export interface CartItemJson {
   available: boolean;
   maxQuantity: number;
   lineTotalCents: number;
-  product: { id: string; slug: string; name: string; priceCents: number; stock: number };
+  product: {
+    id: string;
+    slug: string;
+    name: string;
+    priceCents: number;
+    stock: number;
+    // First image by position (null when the product has no images) plus the
+    // category slug, so the storefront can show the uploaded photo with the
+    // category artwork as fallback — no extra round trip needed.
+    imageUrl: string | null;
+    imageAltText: string | null;
+    categorySlug: string;
+  };
 }
 
 export interface CartJson {
@@ -26,7 +38,8 @@ export interface MergeSummary {
   skippedItems: number;
 }
 
-type CartRow = Cart & { items?: Array<CartItem & { Product?: Product }> };
+type CartProduct = Product & { images?: ProductImage[]; Category?: Category };
+type CartRow = Cart & { items?: Array<CartItem & { Product?: CartProduct }> };
 
 export function emptyCartJson(): CartJson {
   return { id: null, items: [], itemCount: 0, subtotalCents: 0, unavailableCount: 0 };
@@ -39,7 +52,14 @@ export async function getCartJson(cartId: string): Promise<CartJson> {
         model: CartItem,
         as: 'items',
         include: [
-          { model: Product, attributes: ['id', 'slug', 'name', 'priceCents', 'stock', 'isActive'] },
+          {
+            model: Product,
+            attributes: ['id', 'slug', 'name', 'priceCents', 'stock', 'isActive'],
+            include: [
+              { model: ProductImage, as: 'images', attributes: ['url', 'altText', 'position'] },
+              { model: Category, attributes: ['slug'] },
+            ],
+          },
         ],
       },
     ],
@@ -182,6 +202,7 @@ function toCartJson(cart: CartRow): CartJson {
       throw new Error('Cart item loaded without its product');
     }
     const available = product.isActive && product.stock > 0;
+    const firstImage = [...(product.images ?? [])].sort((a, b) => a.position - b.position)[0];
     rows.push({
       json: {
         id: item.id,
@@ -195,6 +216,9 @@ function toCartJson(cart: CartRow): CartJson {
           name: product.name,
           priceCents: product.priceCents,
           stock: product.stock,
+          imageUrl: firstImage?.url ?? null,
+          imageAltText: firstImage?.altText ?? null,
+          categorySlug: product.Category?.slug ?? '',
         },
       },
       createdAt: item.createdAt,

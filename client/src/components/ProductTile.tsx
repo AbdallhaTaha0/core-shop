@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { money, type Product } from '../lib/api';
-import { ComponentArt } from './ComponentArt';
+import { ProductVisual } from './ProductVisual';
 import { Icon } from './Icon';
 
 export function ProductTile({ product, index = 0 }: { product: Product; index?: number }) {
+  const firstImage = product.images[0];
   return (
     <article className="product-tile">
       <Link
@@ -11,7 +12,12 @@ export function ProductTile({ product, index = 0 }: { product: Product; index?: 
         className="tile-visual"
         aria-label={`View ${product.name}`}
       >
-        <ComponentArt kind={product.category.slug} />
+        <ProductVisual
+          imageUrl={firstImage?.url}
+          altText={firstImage?.altText}
+          name={product.name}
+          categorySlug={product.category.slug}
+        />
         <span className="tile-index">C / {String(index + 1).padStart(2, '0')}</span>
       </Link>
       <div className="tile-meta">

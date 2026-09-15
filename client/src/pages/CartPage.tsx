@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { api, body, money } from '../lib/api';
 import { errorText } from '../lib/errors';
 import { useShop } from '../app/shop-context';
-import { ComponentArt } from '../components/ComponentArt';
+import { ProductVisual } from '../components/ProductVisual';
 import { Icon } from '../components/Icon';
 import { Loading } from '../components/Feedback';
 
@@ -63,14 +63,11 @@ export function CartPage() {
                   className="cart-item-art"
                   aria-label={`View ${item.product.name}`}
                 >
-                  <ComponentArt
-                    kind={
-                      item.product.slug.includes('rtx') || item.product.slug.includes('rx-')
-                        ? 'gpus'
-                        : item.product.slug.includes('nvme')
-                          ? 'ssds'
-                          : 'cpus'
-                    }
+                  <ProductVisual
+                    imageUrl={item.product.imageUrl}
+                    altText={item.product.imageAltText}
+                    name={item.product.name}
+                    categorySlug={item.product.categorySlug}
                   />
                 </Link>
                 <div className="cart-item-main">
