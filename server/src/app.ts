@@ -27,6 +27,13 @@ export function createApp(): express.Express {
   // allowed. Everything else (notably `script-src 'self'`, no inline
   // scripts) stays at the strict default — the built frontend ships no
   // inline scripts.
+  //
+  // Referrer-Policy is `same-origin` (not Helmet's `no-referrer` default):
+  // the CSRF check compares Origin, falling back to Referer. `no-referrer`
+  // kills that fallback leg, so a request whose Origin is stripped in
+  // transit (privacy extensions, aggressive browser modes) can never pass.
+  // `same-origin` keeps the full Referer within our own site only — nothing
+  // leaks cross-origin — while giving the check its second signal back.
   app.use(
     helmet({
       contentSecurityPolicy: {
@@ -35,6 +42,7 @@ export function createApp(): express.Express {
           'img-src': ["'self'", 'data:', 'https:'],
         },
       },
+      referrerPolicy: { policy: 'same-origin' },
     }),
   );
   app.use(
